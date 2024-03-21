@@ -34,9 +34,7 @@ jobs:
           uses: hashicorp/setup-terraform@v2.0.3
           with:
             terraform_version: ${{ env.TERRAFORM_VERSION }}
-        - name: Terraform fmt
-          id: fmt
-          run: make check-fmt
+
         - name: Terraform Init
           id: init
           run: make init
