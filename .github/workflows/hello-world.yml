@@ -14,7 +14,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { execSync } = require('child_process');
-            const logs = execSync('terraform show -json tfplan').toString();
+            const logs = execSync('terraform show -json mensaje').toString();
             github.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
