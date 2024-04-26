@@ -4,6 +4,8 @@ on:
   pull_request:
     types: [opened, synchronize]
 env:
+    AWS_ACCOUNT_ID: "818836127373"
+    AWS_REGION: "eu-west-1"
     TERRAFORM_VERSION: "1.6.3"  
     TFPLAN_ID: pr-${{ github.event.pull_request.number }}-${{ github.repository_id }}
 
