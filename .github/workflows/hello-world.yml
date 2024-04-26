@@ -7,17 +7,4 @@ jobs:
     steps: 
       - name: Check out repository code
         uses: actions/checkout@v3
-      - run: echo "$(cat hello_world.txt)" -out=mensaje
-      - name: Add logs to PR comments
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { execSync } = require('child_process');
-            const logs = execSync('terraform show -json mensaje').toString();
-            github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: "Terraform plan details:\n```\n" + logs + "\n```"
-            });
+      - run: echo "$(cat hello_world.txt)"
