@@ -1,5 +1,6 @@
 name: hello-world
-on: push
+on: 
+  pull_request:
 jobs: 
   hello-world-job:
     runs-on: ubuntu-latest
