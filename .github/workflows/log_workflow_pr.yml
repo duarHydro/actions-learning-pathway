@@ -2,35 +2,28 @@ name: Add workflow logs to PR comments
 
 on:
   pull_request:
-    types: [opened, synchronize]
+    
 
 jobs:
   add-logs-to-pr-comments:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write 
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Terraform init
-        run: terraform init
-
-      - name: Terraform plan
-        id: terraform_plan
-        run: terraform plan -out=tfplan
-
-      - name: Add logs to PR comments
-        uses: actions/github-script@v4
+      #contents: write
+      #pull-requests: write
+      #repository-projects: write
+      #id-token: write
+      - name: checkout
+        uses: actions/checkout@v4              
+      - name: Add log TFPlan
+        uses: thollander/actions-comment-pull-request@v2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { execSync } = require('child_process');
-            const logs = execSync('terraform show -json tfplan').toString();
-            github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: "Terraform plan details:\n```\n" + logs + "\n```"
-            });
+          message: |
+            Hello world ! :wave:
 
 
       
