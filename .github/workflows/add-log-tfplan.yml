@@ -1,82 +1,26 @@
-name : Terraform - Plan dev
+name: Add workflow logs to PR comments
+
 on:
   pull_request:
-permissions:
-  id-token: write
-  contents: read  
-env:
-  AWS_ACCOUNT_ID: "818836127373"
-  AWS_REGION: "eu-west-1"
-  TERRAFORM_VERSION: "1.6.3"  
-  TFPLAN_ID: pr-${{ github.event.pull_request.number }}-${{ github.repository_id }}
-  ENV: "dev"
-concurrency: 
-  group: test_pr_comment
+    
+
 jobs:
-  terraform-check:
+  add-logs-to-pr-comments:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write 
+    
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      #contents: write
+      #pull-requests: write
+      #repository-projects: write
+      #id-token: write
       - name: checkout
-        uses: actions/checkout@v4
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: actions/checkout@v4              
+      - name: Add log TFPlan
+        uses: thollander/actions-comment-pull-request@v2
         with:
-          role-to-assume: "arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/github-power-user"
-          role-session-name: "my-aws-actions-session"
-          aws-region: ${{ env.AWS_REGION }}
-      - name: HashiCorp - Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: ${{ env.TERRAFORM_VERSION }}
-      - name: Terraform fmt
-        id: fmt
-        run: make check-fmt
-  plan-dev:
-    runs-on: ubuntu-latest
-    outputs:
-      artifact_id: ${{ steps.upload-tfplan.outputs.artifact-id }}
-    needs: terraform-check
-    steps:
-        - name: checkout
-          id: checkout
-          uses: actions/checkout@v4
-        - name: configure aws credentials
-          id: configure-aws
-          uses: aws-actions/configure-aws-credentials@v4
-          with:
-            role-to-assume: "arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/github-power-user"
-            role-session-name: "my-aws-actions-session"
-            aws-region: ${{ env.AWS_REGION }}
-        - name: HashiCorp - Setup Terraform
-          id: setup-terraform
-          uses: hashicorp/setup-terraform@v3
-          with:
-            terraform_version: ${{ env.TERRAFORM_VERSION }}
-        - name: Terraform fmt
-          id: fmt
-          run: make check-fmt
-        - name: Terraform Init
-          id: init
-          run: make init
-        - name: Terraform Plan
-          id: plan
-          run: make plan -out=LOG_TFPLAN 
-        - name: Upload tfplan
-          id: upload-tfplan
-          uses: actions/upload-artifact@v4
-          with:
-            name: ${{ env.TFPLAN_ID }}-dev-tfplan
-            path: terraform/plan.tfplan
-            if-no-files-found: error
-        - name: Add comment PR
-          uses: actions/github-script@v7
-          with:
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-            script: |
-              const { execSync } = require('child_process');
-              const logs = execSync('terraform show -json LOG_TFPLAN').toString();
-              github.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: "Terraform plan details:\n```\n" + logs + "\n```"});
+          message: |
+            Hello world ! :wave:
